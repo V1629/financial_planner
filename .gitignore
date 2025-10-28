@@ -1,1 +1,5 @@
 /accounts/__pycache__
+db.sqlite3
+/data/*.csv
+*.pyc
+__pycache__/
