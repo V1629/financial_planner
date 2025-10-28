@@ -1,20 +1,513 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Financial Insights</title>
-  {% load static %}  <!-- ✅ Add this line -->
-  <link rel="stylesheet" href="{% static 'finance/styles.css' %}">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      color: white;
+      margin-bottom: 40px;
+      animation: fadeInDown 0.6s ease;
+    }
+
+    .header h1 {
+      font-size: 3em;
+      margin-bottom: 15px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+    }
+
+    .nav-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      animation: fadeIn 0.6s ease 0.2s backwards;
+    }
+
+    .btn {
+      background: white;
+      color: #667eea;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1em;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: white;
+    }
+
+    .summary-card {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      animation: fadeInUp 0.6s ease 0.3s backwards;
+    }
+
+    .summary-card h2 {
+      color: #333;
+      font-size: 2em;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .summary-content {
+      color: #555;
+      font-size: 1.1em;
+      line-height: 1.8;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      padding: 25px;
+      border-radius: 15px;
+      border-left: 5px solid #667eea;
+    }
+
+    .insights-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .insight-card {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      animation: fadeInUp 0.6s ease backwards;
+      transition: all 0.3s ease;
+    }
+
+    .insight-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+    }
+
+    .insight-card h3 {
+      color: #333;
+      font-size: 1.3em;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .insight-value {
+      font-size: 2.5em;
+      font-weight: bold;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 10px;
+    }
+
+    .insight-label {
+      color: #777;
+      font-size: 0.95em;
+    }
+
+    .charts-section {
+      margin-bottom: 30px;
+    }
+
+    .chart-container {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      animation: fadeInUp 0.6s ease backwards;
+    }
+
+    .chart-container h3 {
+      color: #333;
+      font-size: 1.5em;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    canvas {
+      max-height: 400px;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 80px 20px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      animation: fadeInUp 0.6s ease;
+    }
+
+    .no-data svg {
+      width: 120px;
+      height: 120px;
+      margin-bottom: 25px;
+      opacity: 0.4;
+      stroke: #667eea;
+    }
+
+    .no-data h3 {
+      color: #555;
+      font-size: 1.5em;
+      margin-bottom: 10px;
+    }
+
+    .no-data p {
+      color: #999;
+      font-size: 1.1em;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 2em;
+      }
+
+      .insights-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-card {
+        padding: 25px;
+      }
+
+      .chart-container {
+        padding: 20px;
+      }
+
+      .insight-value {
+        font-size: 2em;
+      }
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h1>📊 Financial Insights</h1>
-    <p>{{ summary }}</p>
+    <div class="header">
+      <h1>📊 Financial Insights</h1>
+    </div>
 
-    {% for chart in charts %}
-      <img src="data:image/png;base64,{{ chart }}" alt="Chart" class="chart">
-    {% endfor %}
+    <div class="nav-buttons">
+      <a href="#" class="btn" onclick="goBack()">
+        <span>←</span> Back to Planner
+      </a>
+      <button class="btn btn-primary" onclick="generateInsights()">
+        <span>🔄</span> Refresh Insights
+      </button>
+    </div>
 
-    <a href="{% url 'home' %}" class="btn">Back</a>
+    <div id="contentArea">
+      <div class="no-data">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <h3>No Data Available</h3>
+        <p>Add some transactions to see your financial insights!</p>
+      </div>
+    </div>
   </div>
+
+  <script>
+    let chartInstances = [];
+
+    function goBack() {
+      window.history.back();
+    }
+
+    function destroyCharts() {
+      chartInstances.forEach(chart => chart.destroy());
+      chartInstances = [];
+    }
+
+    function generateInsights() {
+      const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+      
+      if (transactions.length === 0) {
+        document.getElementById('contentArea').innerHTML = `
+          <div class="no-data">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            <h3>No Data Available</h3>
+            <p>Add some transactions to see your financial insights!</p>
+          </div>
+        `;
+        return;
+      }
+
+      destroyCharts();
+
+      // Calculate insights
+      const totalSpent = transactions.reduce((sum, t) => sum + parseFloat(t.expenditure), 0);
+      const categoryTotals = {};
+      const monthlyTotals = {};
+
+      transactions.forEach(t => {
+        // Category totals
+        categoryTotals[t.category] = (categoryTotals[t.category] || 0) + parseFloat(t.expenditure);
+        
+        // Monthly totals
+        const month = t.date.substring(0, 7);
+        monthlyTotals[month] = (monthlyTotals[month] || 0) + parseFloat(t.expenditure);
+      });
+
+      const topCategory = Object.entries(categoryTotals).sort((a, b) => b[1] - a[1])[0];
+      const avgTransaction = totalSpent / transactions.length;
+      const maxTransaction = Math.max(...transactions.map(t => parseFloat(t.expenditure)));
+
+      // Generate summary
+      const summary = `You have spent a total of ₹${totalSpent.toFixed(2)} across ${transactions.length} transactions. 
+        Your highest spending category is ${topCategory[0]} with ₹${topCategory[1].toFixed(2)}. 
+        Your average transaction is ₹${avgTransaction.toFixed(2)}, and your largest single expense was ₹${maxTransaction.toFixed(2)}.`;
+
+      // Build HTML
+      let html = `
+        <div class="summary-card">
+          <h2>💡 Key Insights</h2>
+          <div class="summary-content">${summary}</div>
+        </div>
+
+        <div class="insights-grid">
+          <div class="insight-card" style="animation-delay: 0.4s;">
+            <h3>💰 Total Spent</h3>
+            <div class="insight-value">₹${totalSpent.toFixed(2)}</div>
+            <div class="insight-label">Across all categories</div>
+          </div>
+          <div class="insight-card" style="animation-delay: 0.5s;">
+            <h3>🏆 Top Category</h3>
+            <div class="insight-value">${topCategory[0]}</div>
+            <div class="insight-label">₹${topCategory[1].toFixed(2)} spent</div>
+          </div>
+          <div class="insight-card" style="animation-delay: 0.6s;">
+            <h3>📈 Average Transaction</h3>
+            <div class="insight-value">₹${avgTransaction.toFixed(2)}</div>
+            <div class="insight-label">Per transaction</div>
+          </div>
+          <div class="insight-card" style="animation-delay: 0.7s;">
+            <h3>🔝 Largest Expense</h3>
+            <div class="insight-value">₹${maxTransaction.toFixed(2)}</div>
+            <div class="insight-label">Single transaction</div>
+          </div>
+        </div>
+
+        <div class="charts-section">
+          <div class="chart-container" style="animation-delay: 0.8s;">
+            <h3>📊 Spending by Category</h3>
+            <canvas id="categoryChart"></canvas>
+          </div>
+          <div class="chart-container" style="animation-delay: 0.9s;">
+            <h3>📅 Monthly Spending Trend</h3>
+            <canvas id="monthlyChart"></canvas>
+          </div>
+          <div class="chart-container" style="animation-delay: 1s;">
+            <h3>🎯 Category Distribution</h3>
+            <canvas id="pieChart"></canvas>
+          </div>
+        </div>
+      `;
+
+      document.getElementById('contentArea').innerHTML = html;
+
+      // Create charts
+      const categoryColors = {
+        food: '#FF6384',
+        transport: '#36A2EB',
+        entertainment: '#FFCE56',
+        utilities: '#4BC0C0',
+        other: '#9966FF'
+      };
+
+      // Category Bar Chart
+      const ctxBar = document.getElementById('categoryChart').getContext('2d');
+      const categoryChart = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+          labels: Object.keys(categoryTotals),
+          datasets: [{
+            label: 'Spending (₹)',
+            data: Object.values(categoryTotals),
+            backgroundColor: Object.keys(categoryTotals).map(cat => categoryColors[cat] || '#999'),
+            borderRadius: 10,
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              padding: 12,
+              cornerRadius: 8
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(0,0,0,0.05)' }
+            },
+            x: {
+              grid: { display: false }
+            }
+          }
+        }
+      });
+      chartInstances.push(categoryChart);
+
+      // Monthly Line Chart
+      const ctxLine = document.getElementById('monthlyChart').getContext('2d');
+      const monthlyChart = new Chart(ctxLine, {
+        type: 'line',
+        data: {
+          labels: Object.keys(monthlyTotals),
+          datasets: [{
+            label: 'Monthly Spending (₹)',
+            data: Object.values(monthlyTotals),
+            borderColor: '#667eea',
+            backgroundColor: 'rgba(102, 126, 234, 0.1)',
+            tension: 0.4,
+            fill: true,
+            borderWidth: 3,
+            pointRadius: 5,
+            pointHoverRadius: 7
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              padding: 12,
+              cornerRadius: 8
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: { color: 'rgba(0,0,0,0.05)' }
+            },
+            x: {
+              grid: { display: false }
+            }
+          }
+        }
+      });
+      chartInstances.push(monthlyChart);
+
+      // Pie Chart
+      const ctxPie = document.getElementById('pieChart').getContext('2d');
+      const pieChart = new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+          labels: Object.keys(categoryTotals),
+          datasets: [{
+            data: Object.values(categoryTotals),
+            backgroundColor: Object.keys(categoryTotals).map(cat => categoryColors[cat] || '#999'),
+            borderWidth: 3,
+            borderColor: '#fff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 15,
+                font: { size: 13 }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              padding: 12,
+              cornerRadius: 8,
+              callbacks: {
+                label: function(context) {
+                  const value = context.parsed;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = ((value / total) * 100).toFixed(1);
+                  return `${context.label}: ₹${value.toFixed(2)} (${percentage}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+      chartInstances.push(pieChart);
+    }
+
+    // Generate insights on page load
+    generateInsights();
+  </script>
 </body>
 </html>
