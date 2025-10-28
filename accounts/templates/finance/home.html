@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Smart Financial Planner</title>
+  {% load static %}  <!-- ✅ Load static tag -->
+  <link rel="stylesheet" href="{% static 'finance/styles.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h1>💰 Smart Financial Planner</h1>
+    <form method="POST">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit">Add Transaction</button>
+    </form>
+
+    <a href="{% url 'visualize' %}" class="btn">View Visualization</a>
+
+    <h2>Recent Transactions</h2>
+    <table>
+      <tr><th>Product</th><th>Category</th><th>Expenditure</th><th>Date</th></tr>
+      {% for txn in transactions %}
+      <tr>
+        <td>{{ txn.product_name }}</td>
+        <td>{{ txn.category }}</td>
+        <td>₹{{ txn.expenditure }}</td>
+        <td>{{ txn.date_added|date:"Y-m-d H:i" }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</body>
+</html>
