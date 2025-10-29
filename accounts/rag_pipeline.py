@@ -14,7 +14,7 @@ from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.documents import Document
 
-# ✅ New imports for LangChain 1.0.2
+
 # from langchain.chains.retrieval_qa.base import RetrievalQA
 # from langchain.chains.combine_documents.base import create_stuff_documents_chain
 
@@ -22,9 +22,7 @@ from langchain_core.documents import Document
 load_dotenv()
 
 
-# ======================
-# 🔹 Step 1: Data ingestion from transactions.csv
-# ======================
+
 def init_vector_db():
     df_path = os.path.join("finance", "data", "transactions.csv")
     if not os.path.exists(df_path):
@@ -51,9 +49,9 @@ def init_vector_db():
     return db
 
 
-# ======================
-# 🔹 Step 2: Initialize Groq LLM
-# ======================
+
+# Initializing Groq LLM
+
 def init_llm():
     groq_api_key = os.getenv("GROQ_API_KEY")
     if not groq_api_key:
@@ -67,9 +65,7 @@ def init_llm():
     return llm
 
 
-# ======================
-# 🔹 Step 3: Prompt template
-# ======================
+#prompt template
 prompt = ChatPromptTemplate.from_template("""
 You are a proactive financial and trip-planning assistant.
 You understand user spending patterns from their transactions and can plan trips within given budgets.
@@ -90,9 +86,7 @@ Think step by step and provide a helpful, data-informed response.
 """)
 
 
-# ======================
-# 🔹 Step 4: Create RAG chain manually
-# ======================
+#rag chain
 def create_rag_chain():
     db = init_vector_db()
     retriever = db.as_retriever()
@@ -111,9 +105,7 @@ def create_rag_chain():
     return qa_chain
 
 
-# ======================
-# 🔹 Step 5: Handle user query (with optional web data)
-# ======================
+
 def handle_query(user_query):
     search = DuckDuckGoSearchRun()
     retrieval_chain = create_rag_chain()
