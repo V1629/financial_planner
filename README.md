@@ -38,7 +38,7 @@ The system combines **traditional financial analytics** with **modern AI capabil
   <img src="charts" alt="Dashboard" width="800"/>
 </p>
 <p align="center">
-  <img src="ai_chatbot" alt="Dashboard" width="800"/>
+  <img src="ai_chatbot.png" alt="Dashboard" width="800"/>
 </p>
 
 
