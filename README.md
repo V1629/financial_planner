@@ -3,22 +3,22 @@
 
 ---
 
-## 🧠 Overview
+##Overview
 **Smart Financial Planner** is a full-stack Django web application that helps users **track expenses, visualize financial data, and receive AI-driven insights** through an integrated **RAG-based chatbot**.  
 
 The system combines **traditional financial analytics** with **modern AI capabilities** (LangChain + Groq + Chroma + DuckDuckGo Search) to make budgeting and trip planning smarter.
 
 ---
 
-## 🚀 Features
+##Features
 
-### 🧾 1. Financial Tracker & Analytics
+###1. Financial Tracker & Analytics
 - Add, view, and delete transactions  
 - Track spending by category  
 - Visualize spending with charts (pie, box, violin plots)  
 - Smart insights (average, max, min, std deviation, top category, etc.)  
 
-### 🤖 2. AI RAG Chatbot
+###2. AI RAG Chatbot
 - Connected with **Groq LLM (Mixtral 8x7B)**  
 - Stores transaction history in **Chroma vector database**  
 - Uses **LangChain retrieval chain** for context-aware responses  
@@ -26,6 +26,15 @@ The system combines **traditional financial analytics** with **modern AI capabil
 - Secure API key management via `.env`  
 
 ---
+
+###   3. Demo images
+<p align="center">
+  <img src="financial_planner/UI1" alt="Dashboard" width="800"/>
+</p>
+<p align="center">
+  <img src="financial_planner/UI" alt="Dashboard" width="800"/>
+</p>
+
 
 ## 🏗️ Architecture Overview
 
@@ -72,3 +81,6 @@ financial_planner/
 |**database**       | SQLite (Django ORM)                                  |
 | **Visualization** | Matplotlib, Pandas                                   |
 | **Environment**   | `.env` for API keys, Python virtual environment      |
+
+
+
