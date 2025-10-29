@@ -29,10 +29,10 @@ The system combines **traditional financial analytics** with **modern AI capabil
 
 ###   3. Demo images
 <p align="center">
-  <img src="financial_planner/UI1" alt="Dashboard" width="800"/>
+  <img src="UI1" alt="Dashboard" width="800"/>
 </p>
 <p align="center">
-  <img src="financial_planner/UI" alt="Dashboard" width="800"/>
+  <img src="UI" alt="Dashboard" width="800"/>
 </p>
 
 
