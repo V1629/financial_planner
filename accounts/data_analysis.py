@@ -9,23 +9,22 @@ from datetime import datetime
 
 
 def analyze_transactions(csv_path):
-    # ✅ 1. Load and Clean Data
     df = pd.read_csv(csv_path)
     if df.empty:
         return "No transactions available yet.", []
 
-    # Ensure correct columns exist
+    # checking all the columns
     expected_cols = {'product_name', 'category', 'expenditure', 'date_added'}
     missing = expected_cols - set(df.columns)
     if missing:
         return f"Missing columns: {', '.join(missing)}", []
 
-    # Convert date column properly
+    # Convert data _added column to datetime
     df['date_added'] = pd.to_datetime(df['date_added'], errors='coerce')
     df.dropna(subset=['date_added', 'expenditure'], inplace=True)
     df['month'] = df['date_added'].dt.to_period('M').astype(str)
 
-    # Basic statistics
+    # some of the statististics
     total_spent = df['expenditure'].sum()
     avg_spent = df['expenditure'].mean()
     top_cat = df.groupby('category')['expenditure'].sum().idxmax()
@@ -38,7 +37,7 @@ def analyze_transactions(csv_path):
 
     charts = []
 
-    # ✅ 2. Bar Chart — Category-wise Expenditure
+    #Bar Chart .....category wise
     plt.figure(figsize=(6, 4))
     sns.barplot(x='category', y='expenditure', data=df, estimator=sum, errorbar=None, palette='Blues_d')
     plt.title("Total Expenditure by Category")
@@ -46,7 +45,7 @@ def analyze_transactions(csv_path):
     plt.tight_layout()
     charts.append(_get_base64_plot())
 
-    # ✅ 3. Trend Chart — Monthly Spending Trend
+    #3. Monthly Spending Trend
     monthly_data = df.groupby('month')['expenditure'].sum().reset_index()
     plt.figure(figsize=(6, 4))
     sns.lineplot(x='month', y='expenditure', data=monthly_data, marker='o', color='green')
@@ -55,7 +54,7 @@ def analyze_transactions(csv_path):
     plt.tight_layout()
     charts.append(_get_base64_plot())
 
-    # ✅ 4. Pie Chart — Category Share
+    #Pie Chart — Category Share
     plt.figure(figsize=(5, 5))
     category_share = df.groupby('category')['expenditure'].sum()
     category_share.plot.pie(autopct='%1.1f%%', startangle=90, colors=sns.color_palette('pastel'))
@@ -67,7 +66,7 @@ def analyze_transactions(csv_path):
     return summary, charts
 
 
-# 🧩 Helper Function — Convert Matplotlib Plot to Base64
+#Helper Function — Convert Matplotlib Plot to Base64
 def _get_base64_plot():
     buf = io.BytesIO()
     plt.savefig(buf, format='png')

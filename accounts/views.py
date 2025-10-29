@@ -15,9 +15,9 @@ def home(request):
     if request.method == 'POST':
         form = TransactionForm(request.POST)
         if form.is_valid():
-            transaction = form.save()  # ✅ Django will auto-set date_added
+            transaction = form.save() 
 
-            # ✅ Save to CSV as well
+            #Save to CSV as well
             csv_path = 'data/transactions.csv'
             file_exists = os.path.isfile(csv_path)
 
@@ -30,7 +30,7 @@ def home(request):
                     transaction.product_name,
                     transaction.category,
                     transaction.expenditure,
-                    transaction.date_added.strftime('%Y-%m-%d %H:%M:%S')  # ✅ Add auto date
+                    transaction.date_added.strftime('%Y-%m-%d %H:%M:%S')  
                 ])
 
             return redirect('home')
