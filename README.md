@@ -34,6 +34,9 @@ The system combines **traditional financial analytics** with **modern AI capabil
 <p align="center">
   <img src="UI" alt="Dashboard" width="800"/>
 </p>
+<p align="center">
+  <img src="charts" alt="Dashboard" width="800"/>
+</p>
 
 
 ## 🏗️ Architecture Overview
