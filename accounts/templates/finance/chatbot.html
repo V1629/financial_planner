@@ -1,0 +1,13 @@
+<h1>🧾 AI RAG Chatbot</h1>
+<form method="POST">
+  {% csrf_token %}
+  <textarea name="query" rows="3" placeholder="Ask your question..."></textarea>
+  <button type="submit">Send</button>
+</form>
+
+{% if response %}
+  <div class="response-box">
+    <h3>Response:</h3>
+    <p>{{ response }}</p>
+  </div>
+{% endif %}
